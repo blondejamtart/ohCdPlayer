@@ -22,6 +22,7 @@ int main() {
         int anim = 0;
         std::string bar = "----------";
         int wait = 0;
+        FILE* alsa = popen("aplay -f cd", "w");
         while(track.GetAudio(buf) > 0) {
             if (wait == 20) {
                 std::cout << "\rNow playing: \"" << track.Name() << "\" by " << track.Artist() << " ";
@@ -34,9 +35,10 @@ int main() {
             }
             wait++;
             for (uint32_t i = 0; i < CDIO_CD_FRAMESIZE_RAW; i++) {
-                fprintf(stderr, "%c", ((char *)buf)[i]);
+                fprintf(alsa, "%c", ((char *)buf)[i]);
             }
         }
+        pclose(alsa);
     }
     free(buf);
     std::cout << "\r\n";
